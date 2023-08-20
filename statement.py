@@ -12,9 +12,7 @@ def statement(invoice, plays):
     for perf in invoice["performances"]:
         play = plays[perf["playID"]]
         if play["type"] == "tragedy":
-            this_amount = 40000
-            if perf["audience"] > 30:
-                this_amount += 1000 * (perf["audience"] - 30)
+            this_amount = price_for_tragedy(perf["audience"])
         elif play["type"] == "comedy":
             this_amount = 30000
             if perf["audience"] > 20:
@@ -37,3 +35,10 @@ def statement(invoice, plays):
     result += f"Amount owed is {format_as_dollars(total_amount/100)}\n"
     result += f"You earned {volume_credits} credits\n"
     return result
+
+
+def price_for_tragedy(audience: int) -> float:
+    this_amount = 40000
+    if audience > 30:
+        this_amount += 1000 * (audience - 30)
+    return this_amount
