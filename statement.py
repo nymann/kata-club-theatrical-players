@@ -1,4 +1,5 @@
 import math
+from abc import ABC
 from dataclasses import dataclass
 from typing import Any
 
@@ -15,6 +16,11 @@ class Performance:
     audience: int
 
 
+class PerformancePriceCalculator(ABC):
+    def price(self, performance: Performance) -> float:
+        return 0.0
+
+
 def statement(invoice: dict[str, Any], plays: dict[str, Any]) -> str:
     performances: list[Performance] = []
     for perf in invoice["performances"]:
@@ -23,7 +29,6 @@ def statement(invoice: dict[str, Any], plays: dict[str, Any]) -> str:
         performances.append(Performance(play=play, audience=perf["audience"]))
 
     total_amount = 0
-    volume_credits = 0
     result = f'Statement for {invoice["customer"]}\n'
 
     def format_as_dollars(amount: float) -> str:
@@ -35,13 +40,19 @@ def statement(invoice: dict[str, Any], plays: dict[str, Any]) -> str:
         result += f" {play.name}: {format_as_dollars(this_amount/100)} ({perf.audience} seats)\n"
         total_amount += this_amount
 
+    result += f"Amount owed is {format_as_dollars(total_amount/100)}\n"
+    result += f"You earned {volume_credits(performances)} credits\n"
+    return result
+
+
+def volume_credits(performances: list[Performance]) -> float:
+    volume_credits = 0
+    for perf in performances:
+        play = perf.play
         volume_credits += max(perf.audience - 30, 0)
         if "comedy" == play.type:
             volume_credits += math.floor(perf.audience / 5)
-
-    result += f"Amount owed is {format_as_dollars(total_amount/100)}\n"
-    result += f"You earned {volume_credits} credits\n"
-    return result
+    return volume_credits
 
 
 def price_for_performance(performance: Performance) -> float:
