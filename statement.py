@@ -18,12 +18,9 @@ def statement(invoice, plays):
         else:
             raise ValueError(f'unknown type: {play["type"]}')
 
-        # add volume credits
         volume_credits += max(perf["audience"] - 30, 0)
-        # add extra credit for every ten comedy attendees
         if "comedy" == play["type"]:
             volume_credits += math.floor(perf["audience"] / 5)
-        # print line for this order
         result += f' {play["name"]}: {format_as_dollars(this_amount/100)} ({perf["audience"]} seats)\n'
         total_amount += this_amount
 
