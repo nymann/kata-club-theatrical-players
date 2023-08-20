@@ -14,12 +14,7 @@ def statement(invoice, plays):
         if play["type"] == "tragedy":
             this_amount = price_for_tragedy(perf["audience"])
         elif play["type"] == "comedy":
-            this_amount = 30000
-            if perf["audience"] > 20:
-                this_amount += 10000 + 500 * (perf["audience"] - 20)
-
-            this_amount += 300 * perf["audience"]
-
+            this_amount = price_for_comedy(perf["audience"])
         else:
             raise ValueError(f'unknown type: {play["type"]}')
 
@@ -42,3 +37,10 @@ def price_for_tragedy(audience: int) -> float:
     if audience > 30:
         this_amount += 1000 * (audience - 30)
     return this_amount
+
+
+def price_for_comedy(audience: int) -> float:
+    this_amount = 30000
+    if audience > 20:
+        this_amount += 10000 + 500 * (audience - 20)
+    return this_amount + 300 * audience
